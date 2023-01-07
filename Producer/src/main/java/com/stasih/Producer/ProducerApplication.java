@@ -1,5 +1,7 @@
 package com.stasih.Producer;
 
+import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,6 +21,8 @@ public class ProducerApplication {
 	String username;
 	@Value("${spring.rabbitmq.password}")
 	String password;
+	@Value("${spring.rabbitmq.exchange}")
+	private String exchange;
 	public static void main(String[] args) {
 		SpringApplication.run(ProducerApplication.class, args);
 	}
@@ -39,6 +43,11 @@ public class ProducerApplication {
 		final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(jsonMessageConverter());
 		return rabbitTemplate;
+	}
+
+	@Bean
+	Exchange myExchange() {
+		return ExchangeBuilder.directExchange(exchange).durable(true).build();
 	}
 
 }
